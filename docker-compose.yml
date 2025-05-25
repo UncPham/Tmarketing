@@ -7,6 +7,22 @@ services:
     networks:
       - network-backend
     restart: always
+  wrangler:
+    # run CloudFlare Pages functions using wrangler
+    # docker compose run --rm --service-ports wrangler
+    # docker compose run --rm --service-ports wrangler bash
+    image: 'circleci/node:16-bullseye'
+    user: 'circleci'
+    working_dir: '/home/wrangler'
+    environment:
+      - 'NODE_ENV=development'
+    volumes:
+      - './:/home/wrangler'
+    ports:
+      - '8081:8081' # port for the api
+      - '8976:8976' # port for wrangler
+    # serves our build Vue.js app and runs the Workers
+    command: 'npx wrangler pages dev ./vuejs/dist --port 8081'
 
 networks:
   network-backend:
